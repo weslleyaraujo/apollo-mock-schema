@@ -1,17 +1,17 @@
-import { ApolloLink, Observable } from "apollo-link";
+import { ApolloLink, Observable } from 'apollo-link';
 
 function createSchemaErrorLink({
-  graphQLErrors
+  graphQLErrors,
 }: {
   graphQLErrors?: { message: string }[];
 } = {}) {
   return new ApolloLink(() => {
     const error = [...(graphQLErrors || [])]
       .map(error => error.message)
-      .join("\n");
+      .join('\n');
 
     return new Observable(() => {
-      throw new Error(error || "[apollo-mock-schema] default error message");
+      throw new Error(error || '[apollo-mock-schema] default error message');
     });
   });
 }

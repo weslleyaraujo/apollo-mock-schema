@@ -1,27 +1,27 @@
-import ApolloClient from "apollo-client";
-import SchemaLink from "apollo-link-schema";
-import merge from "lodash.merge";
-import { createErrorLoggerLink } from "./createErrorLoggerLink";
-import { addResolveFunctionsToSchema } from "graphql-tools";
-import { ApolloLink } from "apollo-link";
-import { DeepPartial } from "utility-types";
-import { GraphQLSchema } from "graphql";
-import { ApolloCache } from "apollo-cache";
-import { UnknownResolver } from "./UnknownResolver";
+import ApolloClient from 'apollo-client';
+import SchemaLink from 'apollo-link-schema';
+import merge from 'lodash.merge';
+import { createErrorLoggerLink } from './createErrorLoggerLink';
+import { addResolveFunctionsToSchema } from 'graphql-tools';
+import { ApolloLink } from 'apollo-link';
+import { DeepPartial } from 'utility-types';
+import { GraphQLSchema } from 'graphql';
+import { ApolloCache } from 'apollo-cache';
+import { UnknownResolver } from './UnknownResolver';
 
 export interface MockSchema<T extends UnknownResolver> {
   resolvers: T;
   overwrite?: DeepPartial<ReturnType<T>>;
 }
 
-function createSchemaLink<
+function createSchemaClient<
   T extends UnknownResolver,
   K extends Object = Object
 >({
   resolvers,
   introspection,
   overwrite,
-  cache
+  cache,
 }: {
   introspection: GraphQLSchema;
   cache: ApolloCache<K>;
@@ -39,8 +39,8 @@ function createSchemaLink<
       allowResolversNotInSchema: true,
       requireResolversForAllFields: false,
       requireResolversForArgs: false,
-      requireResolversForNonScalar: false
-    }
+      requireResolversForNonScalar: false,
+    },
   });
 
   const link = new SchemaLink({ schema: introspection });
@@ -51,11 +51,11 @@ function createSchemaLink<
     cache,
     defaultOptions: {
       query: {
-        fetchPolicy: "no-cache",
-        errorPolicy: "all"
-      }
-    }
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+      },
+    },
   });
 }
 
-export { createSchemaLink };
+export { createSchemaClient };

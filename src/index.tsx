@@ -1,27 +1,27 @@
-import React from "react";
-import { OptionsContext, Context } from "./options-context";
-import { ErrorProvider } from "./ErrorProvider";
-import { LoadingProvider } from "./LoadingProvider";
-import { SchemaProvider } from "./SchemaProvider";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { createSchemaLink, MockSchema } from "./createSchemaLink";
-import { createSchemaErrorLink } from "./createSchemaErrorLink";
-import { UnknownResolver } from "./UnknownResolver";
+import React from 'react';
+import { OptionsContext, Context } from './options-context';
+import { ErrorProvider } from './ErrorProvider';
+import { LoadingProvider } from './LoadingProvider';
+import { SchemaProvider } from './SchemaProvider';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { createSchemaClient, MockSchema } from './createSchemaClient';
+import { createSchemaErrorLink } from './createSchemaErrorLink';
+import { UnknownResolver } from './UnknownResolver';
 
 export interface Props<T extends UnknownResolver> extends MockSchema<T> {
   introspection: Object;
   children: React.ReactNode | React.ReactElement<any>;
-  graphQLErrors?: React.ComponentProps<typeof ErrorProvider>["graphQLErrors"];
-  createApolloCache?: Context["createApolloCache"];
+  graphQLErrors?: React.ComponentProps<typeof ErrorProvider>['graphQLErrors'];
+  createApolloCache?: Context['createApolloCache'];
   error?: boolean;
   loading?: boolean;
 }
 
 interface DefaultProps<T extends UnknownResolver>
-  extends Required<Pick<Props<T>, "createApolloCache">> {}
+  extends Required<Pick<Props<T>, 'createApolloCache'>> {}
 
 const defaultProps: DefaultProps<UnknownResolver> = {
-  createApolloCache: () => new InMemoryCache()
+  createApolloCache: () => new InMemoryCache(),
 };
 
 function ApolloMockSchemaProvider<T extends UnknownResolver>({
@@ -32,11 +32,11 @@ function ApolloMockSchemaProvider<T extends UnknownResolver>({
   createApolloCache,
   loading,
   error,
-  graphQLErrors
+  graphQLErrors,
 }: Props<T> & DefaultProps<T>) {
   const value: Context = {
     createApolloCache,
-    introspection
+    introspection,
   };
 
   if (error || (graphQLErrors && graphQLErrors.length)) {
@@ -66,4 +66,4 @@ function ApolloMockSchemaProvider<T extends UnknownResolver>({
 
 ApolloMockSchemaProvider.defaultProps = defaultProps;
 
-export { ApolloMockSchemaProvider, createSchemaLink, createSchemaErrorLink };
+export { ApolloMockSchemaProvider, createSchemaClient, createSchemaErrorLink };
