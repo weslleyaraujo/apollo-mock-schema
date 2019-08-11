@@ -139,6 +139,8 @@ const { queryByText } = render(
 expect(queryByText(/GraphQL error while loading user/)).toBeInTheDocument();
 ```
 
+<iframe src="https://codesandbox.io/embed/bold-elion-qzcrh?fontsize=14&previewwindow=tests" title="bold-elion-qzcrh" allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media" style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+
 ### `createSchemaClient`
 
 Internally used on `ApolloMockSchema`. That's the factory that will return an apollo client with a custom [`Schema Link`](https://www.apollographql.com/docs/link/links/schema/)
