@@ -1,6 +1,137 @@
-# TSDX Bootstrap
+> This project was bootstrapped with [TSDX](https://github.com/jaredpalmer/tsdx).
 
-This project was bootstrapped with [TSDX](https://github.com/jaredpalmer/tsdx).
+## Apollo Mock Schema
+
+This package is 100% inspired by [@stubailo](https://twitter.com/stubailo) post [A new approach to mocking GraphQL data](https://www.freecodecamp.org/news/a-new-approach-to-mocking-graphql-data-1ef49de3d491/)
+
+## Motivation
+
+Apollo provides out of the box a [`MockedProvider`](https://www.apollographql.com/docs/react/api/react-testing/#mockedprovider) component where you can individually mock any graphql operation.
+
+This approach works extremely fine ✅ but it definitely comes with a cost of boilerplate and as your project grows it can get out of hand the number of mocked queries/mutations etc.
+
+This package takes a different approach, as mentioned on [Sashko's](https://twitter.com/stubailo) blog post:
+
+- Mock your GraphqlQL data for your **whole** schema.
+- Customize our mocks on a per-component basis.
+- Mock loading and error states with just one line of code.
+
+I have personally been using this approach in quite a large GraphQL project and it definitely helps keeping track of all your mocks in one place, not mentioning the amount of boilerplate that can be reduced by doing so.
+
+## Installation
+
+This package depends on the following peer dependencies:
+
+- @apollo/react-common
+- @apollo/react-components
+- apollo-cache-inmemory
+- apollo-client
+- graphql
+- react
+
+Make sure to have those installed in your project. Then:
+
+```bash
+yarn add apollo-mock-schema
+```
+
+## Api
+
+### `ApolloMockSchemaProvider`
+
+> Examples using [`@testing-library/react`](https://testing-library.com/docs/react-testing-library/intro)
+
+```tsx
+import { ApolloMockSchemaProvider } from 'apollo-mock-schema';
+import { render } from '@testing-library/react';
+import { Resolvers } from '../generated-resolvers.ts';
+
+const firstName = 'Lorem';
+const lastName = 'Ipsum';
+
+const resolvers: Resolvers = () => ({
+  Query: {
+    user: () => ({
+      isAuthenticated: true,
+      firstName,
+      lastName,
+    }),
+  },
+});
+
+const { queryByText } = render(
+  <ApolloMockSchemaProvider<typeof resolvers>
+    introspection={require('./schema.json').data}
+    resolvers={resolvers}
+    overwrite={{
+      Query: {
+        user: () => ({
+          isAuthenticated: false,
+        }),
+      },
+    }}
+  >
+    <App />
+  </ApolloMockSchemaProvider>
+);
+
+expect(queryByText(firstName)).toBeInTheDocument();
+expect(queryByText(lastName)).toBeInTheDocument();
+expect(queryByText('authenticated')).toBeInTheDocument();
+```
+
+#### Props
+
+| Prop                | type                                        | Required | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------- | ------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resolvers`         | `T extends (...args: any) => any`           | `true`   | A factory to retrieve your resolvers shape. That really depends on your app's schema and essentially its going to be forward to [`https://www.apollographql.com/docs/graphql-tools/resolvers/#addresolvefunctionstoschema-schema-resolvers-resolvervalidationoptions-inheritresolversfrominterfaces-`](https://www.apollographql.com/docs/graphql-tools/resolvers/#addresolvefunctionstoschema-schema-resolvers-resolvervalidationoptions-inheritresolversfrominterfaces-) |
+| `overwrite`         | `DeepPartial<ReturnType<typeof resolvers>>` | `false`  | Same interface as the output of your `resolvers`. This is input for overwriting data.                                                                                                                                                                                                                                                                                                                                                                                      |
+| `graphqlErrors`     | `{ message: string }[]`                     | `false`  | A list of GraphQL error messages case you intentionally expect an error.                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `createApolloCache` | `() => ApolloCache<any>`                    | `false`  | A factory that should return an [`apollo-cache`](https://www.apollographql.com/docs/react/advanced/caching/). Defaults to a simple apollo-inmemory-cache                                                                                                                                                                                                                                                                                                                   |
+| `error`             | `boolean`                                   | `false`  | Enable all GraphQL operations to fail.                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `loading`           | `boolean`                                   | `false`  | Enable all GraphQL operations to respond with `loading`                                                                                                                                                                                                                                                                                                                                                                                                                    |
+
+### Testing a loading state
+
+```tsx
+import { ApolloMockSchemaProvider } from 'apollo-mock-schema';
+import { render } from '@testing-library/react';
+import { Resolvers } from '../generated-resolvers.ts';
+import { resolvers } from '../mocked-resolvers.ts';
+
+const { queryByText } = render(
+  <ApolloMockSchemaProvider<typeof resolvers>
+    introspection={require('./schema.json').data}
+    resolvers={resolvers}
+    loading
+  >
+    <App />
+  </ApolloMockSchemaProvider>
+);
+
+expect(queryByText(/Loading user.../)).toBeInTheDocument();
+```
+
+### Testing an error state
+
+```tsx
+import { ApolloMockSchemaProvider } from 'apollo-mock-schema';
+import { render } from '@testing-library/react';
+import { Resolvers } from '../generated-resolvers.ts';
+import { resolvers } from '../mocked-resolvers.ts';
+
+const { queryByText } = render(
+  <ApolloMockSchemaProvider<typeof resolvers>
+    introspection={require('./schema.json').data}
+    resolvers={resolvers}
+    error
+  >
+    <App />
+  </ApolloMockSchemaProvider>
+);
+
+expect(queryByText(/GraphQL error while loading user/)).toBeInTheDocument();
+```
 
 ## Local Development
 
