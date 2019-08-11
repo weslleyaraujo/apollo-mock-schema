@@ -2,6 +2,8 @@
 
 ## Apollo Mock Schema
 
+[Demo](https://codesandbox.io/s/bold-elion-qzcrh)
+
 This package is 100% inspired by [@stubailo](https://twitter.com/stubailo) post [A new approach to mocking GraphQL data](https://www.freecodecamp.org/news/a-new-approach-to-mocking-graphql-data-1ef49de3d491/)
 
 ## Motivation
