@@ -14,9 +14,9 @@ This approach works extremely fine ✅ but it comes with a cost of boilerplate a
 
 This package takes a different approach, as mentioned in [Sashko's](https://twitter.com/stubailo) blog post:
 
-- Mock your GraphqlQL data for your **whole** schema.
-- Customize our mocks on a per-component basis.
-- Mock loading and error state with just one line of code.
+- Mock your data for your whole gql schema. 🔛
+- Customize mocks per-component basis. ✨
+- Mock loading and error state . 📈
 
 I have personally been using this approach in quite a large GraphQL project and it definitely helps to keep track of all your mocks in one place, not mentioning the amount of boilerplate that can be reduced by doing so.
 
